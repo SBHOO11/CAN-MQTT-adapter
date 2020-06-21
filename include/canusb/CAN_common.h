@@ -13,7 +13,6 @@ class CANData {
 public:
     uint can_id;
     std::array<uint, 8> data;
-//    std::array<uint, CAN_PAYLOAD_LENGTH> data;
 };
 
 #endif //CAN_MQTT_ADAPTER_CAN_COMMON_H
