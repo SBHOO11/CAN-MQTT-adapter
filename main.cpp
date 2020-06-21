@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <CANUsb.h>
+#include <DanfossWrapper.h>
 
 int main(int argc, char** argv) {
     std::cout << "Hello World" << std::endl;
@@ -14,6 +15,7 @@ int main(int argc, char** argv) {
         obj.read(can_data);
         uint32_t var;
         ENCODE_2BYTES_TO_NUM16(can_data.data[0], can_data.data[1], var);
+        DanfossWrapper::parseCANMsg(can_data);
 
         std::cout << "[ID] " << can_data.can_id << " - " << var << std::endl;
 //        for (const auto &value : can_data.data) {

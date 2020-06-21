@@ -23,10 +23,11 @@
     #define DECODE_NUM16_TO_2BYTES(src, b1, b2)  ( ( (b1) = (src) >> 8 ), ( (b2) = (src) & 0x00ff ) )
     #define DECODE_NUM32_TO_4BYTES(src, b1, b2, b3, b4)  ( ( (b1) = (src) >> 24 ), ( (b2) = (src) >> 16 ), ( (b3) = (src) >> 8 ), ( (b4) = (src) & 0x000000ff ) )
 #endif
-#endif //CAN_MQTT_ADAPTER_CAN_COMMON_H
 
 class CANData {
 public:
     uint can_id;
     std::array<uint, 8> data;
 };
+
+#endif //CAN_MQTT_ADAPTER_CAN_COMMON_H
