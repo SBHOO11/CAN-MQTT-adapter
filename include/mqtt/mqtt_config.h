@@ -12,7 +12,8 @@ public:
     MQTT_Config() {};
     std::string server_addr;
     std::string client_id;
-    std::string topic;
+    std::string pub_topic;
+    std::string sub_topic;
     int payload_size{};
     int QOS{};
 };

@@ -16,21 +16,26 @@ MQTT_ITF::MQTT_ITF(const MQTT_Config &config) :
 
     cout << "Initializing MQTT client with addr(" << config_.server_addr << "), "
               << "clientID(" << config_.client_id << ")" << endl;
-
-    cliPtr_->set_callback(Callback_);
-
 }
 
-bool MQTT_ITF::connect() {
-    cout << "Connecting to client..." << endl;
+bool MQTT_ITF::start() {
+    cout << "Connecting to client...";
 
     try {
+        cliPtr_->set_callback(Callback_);
+
         mqtt::token_ptr connTok = cliPtr_->connect();
         connTok->wait();
+        cout << "OK" << endl;
+
+        cout << "before subscribe" << endl;
+        cliPtr_->subscribe(config_.sub_topic, config_.QOS);
+        cout << "after subscribe" << endl;
         return true;
     }
 
     catch(const std::exception& e) {
+        cout << "FAIL" << endl;
         std::cerr << "Error - " << e.what() << endl;
         return false;
     }
@@ -40,17 +45,11 @@ bool MQTT_ITF::publish(std::string &message) {
     cout << "Publishing " << message << endl;
     mqtt::delivery_token_ptr  pubTok;
 
-    pubTok = cliPtr_->publish(config_.topic, message.c_str(), message.size(), config_.QOS, false);
+    pubTok = cliPtr_->publish(config_.pub_topic, message.c_str(), message.size(), config_.QOS, false);
 }
-
-bool MQTT_ITF::subscribe() {}
 
 // --------------------------------------------------------------------------------------------------
 // Implementation of MQTT_ITF::Callback methods
-
-void MQTT_ITF::Callback::connected(const std::string &cause) {
-    cout << "Connection established" << endl;
-}
 
 void MQTT_ITF::Callback::connection_lost(const std::string &cause) {
     cout << "Connection lost" << endl;
@@ -60,4 +59,8 @@ void MQTT_ITF::Callback::connection_lost(const std::string &cause) {
 
 void MQTT_ITF::Callback::delivery_complete(mqtt::delivery_token_ptr tok) {
     cout << "Delivery complete for token: " << (tok ? tok->get_message_id() : -1) << endl;
+}
+
+void MQTT_ITF::Callback::message_arrived(mqtt::const_message_ptr msg) {
+    cout << "Received message - " << msg->get_payload() << endl;
 }

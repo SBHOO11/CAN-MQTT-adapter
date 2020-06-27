@@ -14,18 +14,18 @@ public:
 
     MQTT_ITF(const MQTT_Config &config);
 
-    bool connect();
+    bool start();
     bool publish(std::string &message);
-    bool subscribe();
+
 private:
     MQTT_Config config_;
     mqtt::async_client_ptr cliPtr_;
 
     class Callback : public virtual mqtt::callback {
     public:
-        void connected(const std::string& cause) override;
         void connection_lost(const std::string& cause) override;
         void delivery_complete(mqtt::delivery_token_ptr tok) override;
+        void message_arrived(mqtt::const_message_ptr msg) override;
     };
 
     Callback Callback_;
