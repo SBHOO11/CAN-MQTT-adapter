@@ -6,33 +6,58 @@
 #include "mqtt.h"
 #include "mqtt/async_client.h"
 
-//MQTT_ITF(MQTT_Config &config):config_(config) {};
+using std::cout;
+using std::endl;
+
+
+MQTT_ITF::MQTT_ITF(const MQTT_Config &config) :
+        config_(config),
+        cliPtr_(new mqtt::async_client(config_.server_addr, config_.client_id)) {
+
+    cout << "Initializing MQTT client with addr(" << config_.server_addr << "), "
+              << "clientID(" << config_.client_id << ")" << endl;
+
+    cliPtr_->set_callback(Callback_);
+
+}
 
 bool MQTT_ITF::connect() {
-    std::cout << "Initializing client at '" << config_.server_addr << "'..." << std::endl;
-    mqtt::async_client client_(config_.server_addr, config_.client_id);
-    mqtt::connect_options connOpts;
+    cout << "Connecting to client..." << endl;
 
     try {
-        std::cout << "Connecting...";
-        mqtt::token_ptr connTok = client_.connect(connOpts);
+        mqtt::token_ptr connTok = cliPtr_->connect();
         connTok->wait();
-        std::cout << "Connected." << std::endl;
         return true;
     }
 
     catch(const std::exception& e) {
-        std::cerr << "Error - " << e.what() << std::endl;
+        std::cerr << "Error - " << e.what() << endl;
         return false;
     }
 }
 
 bool MQTT_ITF::publish(std::string &message) {
-    std::cout << "Publishing " << message << std::endl;
+    cout << "Publishing " << message << endl;
     mqtt::delivery_token_ptr  pubTok;
 
-    pubTok = client_->publish(config_.topic, message.c_str(), message.size(), config_.QOS, false);
-    std::cout << "Published" << std::endl;
+    pubTok = cliPtr_->publish(config_.topic, message.c_str(), message.size(), config_.QOS, false);
 }
 
 bool MQTT_ITF::subscribe() {}
+
+// --------------------------------------------------------------------------------------------------
+// Implementation of MQTT_ITF::Callback methods
+
+void MQTT_ITF::Callback::connected(const std::string &cause) {
+    cout << "Connection established" << endl;
+}
+
+void MQTT_ITF::Callback::connection_lost(const std::string &cause) {
+    cout << "Connection lost" << endl;
+    if (!cause.empty())
+        cout << "\tcause: " << cause << endl;
+}
+
+void MQTT_ITF::Callback::delivery_complete(mqtt::delivery_token_ptr tok) {
+    cout << "Delivery complete for token: " << (tok ? tok->get_message_id() : -1) << endl;
+}

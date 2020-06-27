@@ -11,13 +11,24 @@
 
 class MQTT_ITF {
 public:
-    MQTT_ITF(MQTT_Config &config) : config_(config){};
+
+    MQTT_ITF(const MQTT_Config &config);
+
     bool connect();
     bool publish(std::string &message);
     bool subscribe();
 private:
     MQTT_Config config_;
-    std::shared_ptr<mqtt::async_client> client_;
+    mqtt::async_client_ptr cliPtr_;
+
+    class Callback : public virtual mqtt::callback {
+    public:
+        void connected(const std::string& cause) override;
+        void connection_lost(const std::string& cause) override;
+        void delivery_complete(mqtt::delivery_token_ptr tok) override;
+    };
+
+    Callback Callback_;
 };
 
 
