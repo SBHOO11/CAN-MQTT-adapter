@@ -14,7 +14,6 @@ public:
     std::string client_id;
     std::string pub_topic;
     std::string sub_topic;
-    int payload_size{};
     int QOS{};
 };
 

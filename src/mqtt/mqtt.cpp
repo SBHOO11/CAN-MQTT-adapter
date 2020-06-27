@@ -42,7 +42,7 @@ bool MQTT_ITF::start() {
 }
 
 bool MQTT_ITF::publish(std::string &message) {
-    cout << "Publishing " << message << endl;
+    cout << "Publishing - \"" << message << "\"" <<endl;
     mqtt::delivery_token_ptr  pubTok;
 
     pubTok = cliPtr_->publish(config_.pub_topic, message.c_str(), message.size(), config_.QOS, false);
