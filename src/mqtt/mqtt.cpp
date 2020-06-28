@@ -22,6 +22,8 @@ bool MQTT_ITF::start() {
     cout << "Connecting to client...";
 
     try {
+//        cliPtr_->set_message_callback(
+//                static_cast<void (*)(mqtt::const_message_ptr)>(&message_recv_callback));
         cliPtr_->set_callback(Callback_);
 
         mqtt::token_ptr connTok = cliPtr_->connect();
@@ -46,6 +48,13 @@ bool MQTT_ITF::publish(std::string &message) {
     pubTok = cliPtr_->publish(config_.pub_topic, message.c_str(), message.size(), config_.QOS, false);
 }
 
+std::string MQTT_ITF::next_msg() {
+    std::string msg{msg_rx_q_.front()};
+    msg_rx_q_.pop();
+    return msg;
+}
+
+
 // --------------------------------------------------------------------------------------------------
 // Implementation of MQTT_ITF::Callback methods
 
@@ -61,4 +70,5 @@ void MQTT_ITF::Callback::delivery_complete(mqtt::delivery_token_ptr tok) {
 
 void MQTT_ITF::Callback::message_arrived(mqtt::const_message_ptr msg) {
     cout << "Received message - " << msg->get_payload() << endl;
+    msg_rx_q_.push(msg->get_payload());
 }

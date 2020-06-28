@@ -39,5 +39,9 @@ void MQTT_WorkerThread() {
 
             mqttCli.publish(msg);
         }
+
+        if (mqttCli.is_msg_ready()) {
+            Common::MQTT_receive_q.push(mqttCli.next_msg());
+        }
     }
 }
