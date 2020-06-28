@@ -1,34 +1,44 @@
+//
+// Created by shibinhoo on 28/6/20.
+//
+
 #include <iostream>
-#include <iomanip>
-#include <CANUsb.h>
-#include <DanfossWrapper.h>
+#include <thread>
+#include "CANUsb.h"
+#include "Common.h"
 
-int main(int argc, char** argv) {
-    std::cout << "Hello World" << std::endl;
 
-    CANUsb obj = CANUsb("canusb");
-    obj.open();
+using std::cout;
+using std::cerr;
+using std::endl;
 
-    CANData can_data;
+void CAN_ReadTask(CANUsb& can);
 
-    while (true) {
-        obj.read(can_data);
-        uint32_t var;
-        ENCODE_2BYTES_TO_NUM16(can_data.data[0], can_data.data[1], var);
-        DanfossWrapper::parseCANMsg(can_data);
+void CANBusWorkerThread() {
 
-        std::cout << "[ID] " << can_data.can_id << " - " << var << std::endl;
-//        for (const auto &value : can_data.data) {
-//            std::cout << value << " ";
-//        }
-//        std::cout << std::endl;
+    // Initialize CAN bus
+    CANUsb can = CANUsb("vcan0");
+    can.open();
+
+    std::thread CAN_ReadThread(CAN_ReadTask, std::ref(can));
+
+    while (1) {
+        if (!Common::CAN_publish_q.empty()) {
+            CANData can_data;
+            can_data = Common::CAN_publish_q.front();
+            Common::CAN_publish_q.pop();
+            can.write(can_data);
+        }
     }
 
-//    can_data.can_id = 15;
-//    can_data.data = {1,2,3,4,5,6,7,8};
-//    obj.write(can_data);
+    CAN_ReadThread.join();
+}
 
-    obj.close();
+void CAN_ReadTask(CANUsb& can) {
 
-    return 0;
+    while (1) {
+        CANData can_data;
+        can.read(can_data);
+        Common::CAN_receive_q.push(can_data);
+    }
 }
