@@ -28,9 +28,8 @@ bool MQTT_ITF::start() {
         connTok->wait();
         cout << "OK" << endl;
 
-        cout << "before subscribe" << endl;
         cliPtr_->subscribe(config_.sub_topic, config_.QOS);
-        cout << "after subscribe" << endl;
+
         return true;
     }
 
@@ -44,7 +43,6 @@ bool MQTT_ITF::start() {
 bool MQTT_ITF::publish(std::string &message) {
     cout << "Publishing - \"" << message << "\"" <<endl;
     mqtt::delivery_token_ptr  pubTok;
-
     pubTok = cliPtr_->publish(config_.pub_topic, message.c_str(), message.size(), config_.QOS, false);
 }
 
