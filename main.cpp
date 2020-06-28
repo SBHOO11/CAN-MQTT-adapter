@@ -11,10 +11,12 @@ using std::cout;
 using std::endl;
 
 
-int MQTT_WorkerThread();
+void MQTT_WorkerThread();
+void CANBusWorkerThread();
 
 int main(int argc, char** argv) {
     std::thread MQTT_MainThread(MQTT_WorkerThread);
+    std::thread CAN_MainThread(CANBusWorkerThread);
     std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
     cout << ">> ";
@@ -25,4 +27,5 @@ int main(int argc, char** argv) {
     }
 
     MQTT_MainThread.join();
+    CAN_MainThread.join();
 }
