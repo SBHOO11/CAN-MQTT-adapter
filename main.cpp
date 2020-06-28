@@ -2,13 +2,27 @@
 // Created by shibinhoo on 27/6/20.
 //
 
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include "Common.h"
 
-int startMQTTMain();
+using std::cout;
+using std::endl;
+
+
+int MQTT_WorkerThread();
 
 int main(int argc, char** argv) {
-    startMQTTMain();
+    std::thread MQTT_MainThread(MQTT_WorkerThread);
+    std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
-    while (true) {
-        continue;
+    cout << ">> ";
+    std::string msg;
+    while (std::getline(std::cin, msg)) {
+        Common::MQTT_publish_q.push(msg);
+        cout << ">> " << endl;
     }
+
+    MQTT_MainThread.join();
 }

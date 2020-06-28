@@ -3,18 +3,17 @@
 //
 
 #include <iostream>
-#include <chrono>
 #include "mqtt.h"
+#include "Common.h"
 
 using std::cout;
 using std::cerr;
 using std::endl;
 
 
-void MQTT_ClientTask(MQTT_ITF& cli);
+void MQTT_WorkerThread() {
 
-int startMQTTMain () {
-
+    // Initialize MQTT client
     MQTT_Config Config = MQTT_Config();
     Config.server_addr = "tcp://localhost:1883";
     Config.client_id = "CAN-MQTT-adapter";
@@ -28,23 +27,21 @@ int startMQTTMain () {
         cout << "Successfully set up MQTT client" << endl;
     }
     else {
+        // TODO: not sure how to handle yet
         cerr << "Unable to set up MQTT client" << endl;
-        return -1;
     }
 
-    std::thread MQTT_MainThread(MQTT_ClientTask, std::ref(mqttCli));
+    // Main function
+    while (1) {
+        if (!Common::MQTT_publish_q.empty()) {
+            std::string msg{Common::MQTT_publish_q.front()};
+            Common::MQTT_publish_q.pop();
 
-    MQTT_MainThread.join();
-}
+            mqttCli.publish(msg);
+        }
 
-void MQTT_ClientTask(MQTT_ITF &cli) {
-
-    int count = 0;
-    std::string message;
-    while (true) {
-        message = "hello" + std::to_string(count);
-        cli.publish(message);
-        count++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        if (mqttCli.is_msg_ready()) {
+            Common::MQTT_receive_q.push(mqttCli.next_msg());
+        }
     }
 }
