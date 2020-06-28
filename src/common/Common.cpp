@@ -7,3 +7,5 @@
 // Initialize (static) queues
 std::queue<std::string> Common::MQTT_publish_q{};
 std::queue<std::string> Common::MQTT_receive_q{};
+std::queue<CANData> Common::CAN_publish_q{};
+std::queue<CANData> Common::CAN_receive_q{};

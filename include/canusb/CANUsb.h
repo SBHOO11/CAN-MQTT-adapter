@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <string>
 #include <cstring>
+#include <queue>
 
 #include "CAN_common.h"
 
