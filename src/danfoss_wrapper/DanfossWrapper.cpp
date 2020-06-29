@@ -16,6 +16,7 @@ std::string DanfossWrapper::convertCAN2MQTT(CAN_Msg &can_msg) {
     std::string MQTT_header{CAN_id_2_MQTT_header_map_[can_msg.can_id]};
     if (MQTT_header == "") {
         std::cerr << "CAN-id to MQTT mapping not found" << std::endl;
+        throw Common::InvalidMapping();
     }
 
     // Construct MQTT payload form CAN data
@@ -42,6 +43,7 @@ CAN_Msg DanfossWrapper::convertMQTT2CAN(std::string mqtt_msg) {
 
     if (itr == end_itr) {
         std::cerr << "MQTT -> CANid mapping not found" << std::endl;
+        throw Common::InvalidMapping();
     }
 
     CAN_Msg can_msg{};

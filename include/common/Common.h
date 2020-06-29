@@ -17,6 +17,12 @@ public:
     static std::queue<CAN_Msg> CAN_publish_q;
     static std::queue<CAN_Msg> CAN_receive_q;
 
+    class InvalidMapping : public std::exception {
+    public:
+        const char* what() const throw() {
+            return "Invalid mapping of CAN_id and MQTT_header\n";
+        }
+    };
 };
 
 #endif //CAN_MQTT_ADAPTER_COMMON_H
