@@ -14,8 +14,8 @@ class Common {
 public:
     static std::queue<std::string> MQTT_publish_q;
     static std::queue<std::string> MQTT_receive_q;
-    static std::queue<CANData> CAN_publish_q;
-    static std::queue<CANData> CAN_receive_q;
+    static std::queue<CAN_Msg> CAN_publish_q;
+    static std::queue<CAN_Msg> CAN_receive_q;
 
 };
 

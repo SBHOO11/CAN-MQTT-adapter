@@ -24,10 +24,10 @@ void CANBusWorkerThread() {
 
     while (1) {
         if (!Common::CAN_publish_q.empty()) {
-            CANData can_data;
-            can_data = Common::CAN_publish_q.front();
+            CAN_Msg can_msg;
+            can_msg = Common::CAN_publish_q.front();
             Common::CAN_publish_q.pop();
-            can.write(can_data);
+            can.write(can_msg);
         }
     }
 
@@ -37,8 +37,8 @@ void CANBusWorkerThread() {
 void CAN_ReadTask(CANUsb& can) {
 
     while (1) {
-        CANData can_data;
-        can.read(can_data);
-        Common::CAN_receive_q.push(can_data);
+        CAN_Msg can_msg;
+        can.read(can_msg);
+        Common::CAN_receive_q.push(can_msg);
     }
 }
