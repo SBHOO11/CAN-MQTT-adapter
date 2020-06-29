@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include "Common.h"
 #include "CAN_common.h"
 
 class DanfossWrapper {
