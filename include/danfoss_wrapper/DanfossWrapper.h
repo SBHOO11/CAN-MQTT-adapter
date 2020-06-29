@@ -5,14 +5,18 @@
 #ifndef CAN_MQTT_ADAPTER_DANFOSSWRAPPER_H
 #define CAN_MQTT_ADAPTER_DANFOSSWRAPPER_H
 
-#include <CAN_common.h>
+#include <string>
+#include <map>
+#include <algorithm>
+#include "CAN_common.h"
 
 class DanfossWrapper {
 public:
-    static bool parseCANMsg(const CANData& can_msg);
+    static std::string convertCAN2MQTT(CAN_Msg& can_data);
+    static CAN_Msg convertMQTT2CAN(std::string mqtt_msg);
 
-    // Node ID for respective commands
-    static const int kCAN_joystick_id  {10} ;
+private:
+    static std::map<uint, std::string> CAN_id_2_MQTT_header_map_;
 };
 
 
