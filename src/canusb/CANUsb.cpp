@@ -49,23 +49,23 @@ int CANUsb::close() {
     return ::close(socket_fd_);
 }
 
-int CANUsb::write(CANData& can_data) {
+int CANUsb::write(CAN_Msg& can_msg) {
 
-    write_can_frame_.can_id = can_data.can_id;
-    std::copy( std::begin(can_data.data),
-               std::end(can_data.data),
+    write_can_frame_.can_id = can_msg.can_id;
+    std::copy( std::begin(can_msg.data),
+               std::end(can_msg.data),
                std::begin(write_can_frame_.data));
 
     return ::write(socket_fd_, &write_can_frame_, sizeof(write_can_frame_));
 }
 
-int CANUsb::read(CANData& can_data) {
+int CANUsb::read(CAN_Msg& can_msg) {
 
     int ret = ::read(socket_fd_, &read_can_frame_, sizeof(struct can_frame));
 
     if (ret > 0) {
-        can_data.can_id = read_can_frame_.can_id;
-        std::copy(std::begin(read_can_frame_.data), std::end(read_can_frame_.data), std::begin(can_data.data));
+        can_msg.can_id = read_can_frame_.can_id;
+        std::copy(std::begin(read_can_frame_.data), std::end(read_can_frame_.data), std::begin(can_msg.data));
     }
 
     return ret;

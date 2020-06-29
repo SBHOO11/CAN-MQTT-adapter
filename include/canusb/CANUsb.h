@@ -21,8 +21,8 @@ class CANUsb {
 public:
     CANUsb(std::string ITF_name): ITF_name_(ITF_name) {} ;
     int open();
-    int write(CANData& can_data);
-    int read(CANData& can_data);
+    int write(CAN_Msg& can_msg);
+    int read(CAN_Msg& can_msg);
     int close();
 private:
     const std::string ITF_name_;
