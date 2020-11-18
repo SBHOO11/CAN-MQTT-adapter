@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "mqtt.h"
+#include "mqtt_common.h"
 #include "Common.h"
 
 using std::cout;
@@ -34,7 +35,7 @@ void MQTT_WorkerThread() {
     // Main function
     while (1) {
         if (!Common::MQTT_publish_q.empty()) {
-            std::string msg{Common::MQTT_publish_q.front()};
+            MQTT_Msg msg = Common::MQTT_publish_q.front();
             Common::MQTT_publish_q.pop();
 
             mqttCli.publish(msg);
