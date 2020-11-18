@@ -10,11 +10,12 @@
 #include <algorithm>
 #include "Common.h"
 #include "CAN_common.h"
+#include "mqtt_common.h"
 
 class DanfossWrapper {
 public:
-    static std::string convertCAN2MQTT(CAN_Msg& can_data);
-    static CAN_Msg convertMQTT2CAN(std::string mqtt_msg);
+    static MQTT_Msg convertCAN2MQTT(CAN_Msg &can_data);
+    static CAN_Msg convertMQTT2CAN(MQTT_Msg &mqtt_msg);
 
 private:
     static std::map<uint, std::string> CAN_id_2_MQTT_header_map_;

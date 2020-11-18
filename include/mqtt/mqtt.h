@@ -9,23 +9,23 @@
 #include <queue>
 #include <string>
 #include "mqtt_config.h"
+#include "mqtt_common.h"
 #include "mqtt/async_client.h"
 
 
 class MQTT_ITF {
 public:
-
     MQTT_ITF(const MQTT_Config &config);
 
     bool start();
-    bool publish(std::string &message);
+    bool publish(MQTT_Msg &message);
     bool is_msg_ready() { return !msg_rx_q_.empty(); };
-    std::string next_msg();
+    MQTT_Msg next_msg();
 
 private:
     MQTT_Config config_;
     mqtt::async_client_ptr cliPtr_;
-    inline static std::queue<std::string> msg_rx_q_{};   // ask Gio why this static is needed
+    inline static std::queue<MQTT_Msg> msg_rx_q_{};   // ask Gio why this static is needed
 
     class Callback : public virtual mqtt::callback {
     public:

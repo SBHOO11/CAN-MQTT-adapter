@@ -29,8 +29,7 @@ int main(int argc, char** argv) {
             Common::CAN_receive_q.pop();
 
             // Convert CAN msg to MQTT msg
-            std::string mqtt_msg{};
-            mqtt_msg = DanfossWrapper::convertCAN2MQTT(can_msg);
+            MQTT_Msg mqtt_msg = DanfossWrapper::convertCAN2MQTT(can_msg);
 
             // Push MQTT msg into MQTT_publish_q
             Common::MQTT_publish_q.push(mqtt_msg);
@@ -38,8 +37,7 @@ int main(int argc, char** argv) {
 
         if (!Common::MQTT_receive_q.empty()) {
             // Retrieve MQTT msg from MQTT_receive_q
-            std::string mqtt_msg{};
-            mqtt_msg = Common::MQTT_receive_q.front();
+            MQTT_Msg mqtt_msg = Common::MQTT_receive_q.front();
             Common::MQTT_receive_q.pop();
 
             // Convert MQTT msg to CAN msg

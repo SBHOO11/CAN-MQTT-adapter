@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include "mqtt.h"
-#include "mqtt/async_client.h"
 
 using std::cout;
 using std::endl;
@@ -30,7 +29,11 @@ bool MQTT_ITF::start() {
         connTok->wait();
         cout << "OK" << endl;
 
-        cliPtr_->subscribe(config_.sub_topic, config_.QOS);
+        // cliPtr_->subscribe(config_.sub_topic, config_.QOS);
+
+        cliPtr_->subscribe("Joystick_X",0);
+        cliPtr_->subscribe("Joystick_Y",0);
+        cliPtr_->subscribe("Joystick_Z",0);
 
         return true;
     }
@@ -42,14 +45,14 @@ bool MQTT_ITF::start() {
     }
 }
 
-bool MQTT_ITF::publish(std::string &message) {
-    cout << "Publishing - \"" << message << "\"" <<endl;
+bool MQTT_ITF::publish(MQTT_Msg &msg) {
+    cout << "Publishing - [" << msg.topic << "] - " << msg.payload << endl;
     mqtt::delivery_token_ptr  pubTok;
-    pubTok = cliPtr_->publish(config_.pub_topic, message.c_str(), message.size(), config_.QOS, false);
+    pubTok = cliPtr_->publish(msg.topic.c_str(), msg.payload.c_str(), msg.payload.size(), config_.QOS, false);
 }
 
-std::string MQTT_ITF::next_msg() {
-    std::string msg{msg_rx_q_.front()};
+MQTT_Msg MQTT_ITF::next_msg() {
+    MQTT_Msg msg = msg_rx_q_.front();
     msg_rx_q_.pop();
     return msg;
 }
@@ -69,6 +72,7 @@ void MQTT_ITF::Callback::delivery_complete(mqtt::delivery_token_ptr tok) {
 }
 
 void MQTT_ITF::Callback::message_arrived(mqtt::const_message_ptr msg) {
-    cout << "Received message - " << msg->get_payload() << endl;
-    msg_rx_q_.push(msg->get_payload());
+    MQTT_Msg m (msg->get_topic(), msg->get_payload());
+    cout << "Received message - [" << m.topic << "] - " << m.payload << endl;
+    msg_rx_q_.push(m);
 }
