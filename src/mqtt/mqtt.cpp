@@ -13,25 +13,22 @@ MQTT_ITF::MQTT_ITF(const MQTT_Config &config) :
         config_(config),
         cliPtr_(new mqtt::async_client(config_.server_addr, config_.client_id)) {
 
-    cout << "Initializing MQTT client with addr(" << config_.server_addr << "), "
-              << "clientID(" << config_.client_id << ")" << endl;
+    cout << "Initializing MQTT client with addr (" << config_.server_addr << "), "
+              << "clientID (" << config_.client_id << ")" << endl;
 }
 
 bool MQTT_ITF::start() {
-    cout << "Connecting to client...";
 
+    // Connecting to client
     try {
-//        cliPtr_->set_message_callback(
-//                static_cast<void (*)(mqtt::const_message_ptr)>(&message_recv_callback));
         cliPtr_->set_callback(Callback_);
 
         mqtt::token_ptr connTok = cliPtr_->connect();
         connTok->wait();
-        cout << "OK" << endl;
+        // Connection successful
 
         // Subscribe to topics
         for (std::string sub_topic_name : config_.sub_topics) {
-            std::cout << sub_topic_name << std::endl;
             cliPtr_->subscribe(sub_topic_name, config_.QOS);
         }
 
