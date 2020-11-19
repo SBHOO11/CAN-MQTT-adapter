@@ -2,8 +2,28 @@
 // Created by shibinhoo on 22/6/20.
 //
 
-#include <iostream>
 #include "DanfossWrapper.h"
+
+DanfossWrapper::DanfossWrapper() {
+    std::ifstream infile("../addr_mapping.json", std::ifstream::binary);
+
+    if (!infile) {
+        std::cerr << "Unable to read addr_mapping.json, exiting program..." << std::endl;
+        exit(1);
+    }
+
+    Json::CharReaderBuilder rbuilder;
+    rbuilder["collectComments"] = false;
+    std::string errs;
+
+    bool parsed = Json::parseFromStream(rbuilder, infile, &addr_map, &errs);
+    if (!parsed) {
+        std::cerr << "Invalid config from addr_mapping.json" << std::endl;
+        std::cerr << "Error msg - " << errs << std::endl;
+        std::cerr << "Exiting program..." << std::endl;
+        exit(1);
+    }
+}
 
 std::map<uint, std::string> DanfossWrapper::CAN_id_2_MQTT_header_map_ = {
         {10, "Joystick_X"},

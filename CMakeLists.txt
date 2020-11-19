@@ -23,7 +23,8 @@ add_executable(CAN_MQTT_adapter
 
 find_library(PAHO_MQTT_C_LIB paho-mqtt3as)
 find_library(PAHO_MQTT_CPP_LIB paho-mqttpp3)
+find_library(JSONCPP_LIB jsoncpp)
 find_library(THREAD_LIB pthread)
 
-target_link_libraries(CAN_MQTT_adapter ${PAHO_MQTT_CPP_LIB} ${PAHO_MQTT_C_LIB} ${THREAD_LIB})
+target_link_libraries(CAN_MQTT_adapter ${PAHO_MQTT_CPP_LIB} ${PAHO_MQTT_C_LIB} ${JSONCPP_LIB} ${THREAD_LIB})
 

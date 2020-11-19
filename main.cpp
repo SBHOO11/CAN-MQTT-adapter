@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
     std::thread CAN_MainThread(CANBusWorkerThread);
     std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
+    DanfossWrapper dw;
+
     while (1) {
         if (!Common::CAN_receive_q.empty()) {
             // Retrieve CAN msg from CAN_receive_q
@@ -29,7 +31,7 @@ int main(int argc, char** argv) {
             Common::CAN_receive_q.pop();
 
             // Convert CAN msg to MQTT msg
-            MQTT_Msg mqtt_msg = DanfossWrapper::convertCAN2MQTT(can_msg);
+            MQTT_Msg mqtt_msg = dw.convertCAN2MQTT(can_msg);
 
             // Push MQTT msg into MQTT_publish_q
             Common::MQTT_publish_q.push(mqtt_msg);
@@ -42,7 +44,7 @@ int main(int argc, char** argv) {
 
             // Convert MQTT msg to CAN msg
             CAN_Msg can_msg;
-            can_msg = DanfossWrapper::convertMQTT2CAN(mqtt_msg);
+            can_msg = dw.convertMQTT2CAN(mqtt_msg);
 
             // Push CAN msg into CAN_publish_q
             Common::CAN_publish_q.push(can_msg);
