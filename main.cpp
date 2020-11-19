@@ -16,14 +16,14 @@ using std::endl;
 
 
 void MQTT_WorkerThread(Json::Value);
-void CANBusWorkerThread();
+void CANBusWorkerThread(Json::Value);
 
 int main(int argc, char** argv) {
     ConfigManager config("../config.json");
     DanfossWrapper dw(config.getAddrMapping());
 
     std::thread MQTT_MainThread(MQTT_WorkerThread, config.getMqttConfig());
-    std::thread CAN_MainThread(CANBusWorkerThread);
+    std::thread CAN_MainThread(CANBusWorkerThread, config.getCanbusConfig());
     std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
 

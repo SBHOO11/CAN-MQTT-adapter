@@ -10,6 +10,7 @@ public:
     ConfigManager(std::string);
     Json::Value getMqttConfig() {return config["mqtt_config"];}; 
     Json::Value getAddrMapping() {return config["addr_mapping"];};
+    Json::Value getCanbusConfig() {return config["canbus_config"];};
 
 private:
     Json::Value config;

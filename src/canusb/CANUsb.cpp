@@ -10,7 +10,7 @@ int CANUsb::open() {
     // Initialize CANusb interface
     socket_fd_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if (socket_fd_ < 0) {
-        std::cerr << "Could not open CANBus socket" << std::endl;
+        std::cerr << "[ERR] Could not open CANBus socket" << std::endl;
         return -1;
     }
     // CANBus socket opened successfully
@@ -20,7 +20,7 @@ int CANUsb::open() {
     struct ifreq ifr{};
     strcpy(ifr.ifr_name, ITF_name_.c_str());
     if (ioctl(socket_fd_, SIOCGIFINDEX, &ifr) < 0) {
-        std::cerr << "Error setting device parameters (ioctl)" << std::endl;
+        std::cerr << "[ERR] Error setting device parameters (ioctl)" << std::endl;
         return -1;
     }
 
@@ -28,7 +28,7 @@ int CANUsb::open() {
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;
     if (bind(socket_fd_, (struct sockaddr*)(&addr), sizeof(addr))) {
-        std::cerr << "Error binding CAN interface" << std::endl;
+        std::cerr << "[ERR] Error binding CAN interface" << std::endl;
         return -1;
     }
 

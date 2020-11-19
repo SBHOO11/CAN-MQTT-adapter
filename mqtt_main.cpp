@@ -33,10 +33,10 @@ void MQTT_WorkerThread(Json::Value mqtt_config) {
     MQTT_ITF mqttCli = MQTT_ITF(Config);
 
     if (mqttCli.start()) {
-        cout << "Successfully set up MQTT client" << endl;
+        cout << "[OK] MQTT client" << endl;
     }
     else {
-        cerr << "Unable to set up MQTT client" << endl;
+        cerr << "[ERR] Unable to set up MQTT client" << endl;
         exit(1);
     }
 

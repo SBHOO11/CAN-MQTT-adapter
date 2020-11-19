@@ -6,6 +6,10 @@
         "qos": 1
     },
     
+    "canbus_config": {
+        "socket_name": "vcan0"
+    },
+
     "addr_mapping": {
         "lift": 10,
         "tilt": 11,
