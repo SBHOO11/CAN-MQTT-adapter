@@ -29,11 +29,11 @@ bool MQTT_ITF::start() {
         connTok->wait();
         cout << "OK" << endl;
 
-        // cliPtr_->subscribe(config_.sub_topic, config_.QOS);
-
-        cliPtr_->subscribe("Joystick_X",0);
-        cliPtr_->subscribe("Joystick_Y",0);
-        cliPtr_->subscribe("Joystick_Z",0);
+        // Subscribe to topics
+        for (std::string sub_topic_name : config_.sub_topics) {
+            std::cout << sub_topic_name << std::endl;
+            cliPtr_->subscribe(sub_topic_name, config_.QOS);
+        }
 
         return true;
     }
@@ -68,7 +68,7 @@ void MQTT_ITF::Callback::connection_lost(const std::string &cause) {
 }
 
 void MQTT_ITF::Callback::delivery_complete(mqtt::delivery_token_ptr tok) {
-    cout << "Delivery complete for token: " << (tok ? tok->get_message_id() : -1) << endl;
+    // cout << "Delivery complete for token: " << (tok ? tok->get_message_id() : -1) << endl;
 }
 
 void MQTT_ITF::Callback::message_arrived(mqtt::const_message_ptr msg) {

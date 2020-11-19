@@ -1,0 +1,16 @@
+{
+    "mqtt_config": {
+        "server_addr": "tcp://localhost:1883",
+        "client_id": "CAN-MQTT-adapter",
+        "sub_topics": ["sub_topic1"],
+        "qos": 1
+    },
+    
+    "addr_mapping": {
+        "lift": 10,
+        "tilt": 11,
+        "extend": 12,
+        "rotate": 13,
+        "sub_topic1": 20
+    }
+}

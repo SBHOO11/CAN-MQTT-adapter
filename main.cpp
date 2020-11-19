@@ -5,6 +5,8 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include "json/json.h"
+#include <config_manager.h>
 #include "Common.h"
 #include "CAN_common.h"
 #include "DanfossWrapper.h"
@@ -13,15 +15,17 @@ using std::cout;
 using std::endl;
 
 
-void MQTT_WorkerThread();
+void MQTT_WorkerThread(Json::Value);
 void CANBusWorkerThread();
 
 int main(int argc, char** argv) {
-    std::thread MQTT_MainThread(MQTT_WorkerThread);
+    ConfigManager config("../config.json");
+    DanfossWrapper dw(config.getAddrMapping());
+
+    std::thread MQTT_MainThread(MQTT_WorkerThread, config.getMqttConfig());
     std::thread CAN_MainThread(CANBusWorkerThread);
     std::this_thread::sleep_for(std::chrono::milliseconds (100));
 
-    DanfossWrapper dw;
 
     while (1) {
         if (!Common::CAN_receive_q.empty()) {

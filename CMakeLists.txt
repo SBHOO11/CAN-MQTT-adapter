@@ -8,16 +8,18 @@ include_directories(
         include/danfoss_wrapper
         include/mqtt
         include/common
+        include/config_manager
         )
 
 add_executable(CAN_MQTT_adapter
         main.cpp
         mqtt_main.cpp
+        canbus_main.cpp
         src/mqtt/mqtt.cpp
         src/common/Common.cpp
-        canbus_main.cpp
         src/canusb/CANUsb.cpp
         src/danfoss_wrapper/DanfossWrapper.cpp
+        src/config_manager/config_manager.cpp
         )
 
 
