@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <thread>
+#include "json/json.h"
 #include "CANUsb.h"
 #include "Common.h"
 
@@ -14,11 +15,14 @@ using std::endl;
 
 void CAN_ReadTask(CANUsb& can);
 
-void CANBusWorkerThread() {
+void CANBusWorkerThread(Json::Value config) {
 
     // Initialize CAN bus
-    CANUsb can = CANUsb("vcan0");
+    std::string socket_name = config["socket_name"].asString();
+    std::cout << "Initializing CANBus socket (" << socket_name << ")" << std::endl;
+    CANUsb can = CANUsb(socket_name);
     can.open();
+    std::cout << "[OK] CANBus socket (" << socket_name << ")" << std::endl;
 
     std::thread CAN_ReadThread(CAN_ReadTask, std::ref(can));
 

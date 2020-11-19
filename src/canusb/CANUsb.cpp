@@ -7,37 +7,35 @@
 
 int CANUsb::open() {
 
-    std::cout << "Initialize CANusb interface " << ITF_name_ << std::endl;
-
+    // Initialize CANusb interface
     socket_fd_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if (socket_fd_ < 0) {
-        std::cerr << "Could not open CANBus socket" << std::endl;
+        std::cerr << "[ERR] Could not open CANBus socket" << std::endl;
         return -1;
     }
+    // CANBus socket opened successfully
 
-    std::cout << "CANBus socket opened successfully" << std::endl;
-
-    std::cout << "Getting network interface index" << std::endl;
+    // Getting network interface index
     struct sockaddr_can addr{};
     struct ifreq ifr{};
     strcpy(ifr.ifr_name, ITF_name_.c_str());
     if (ioctl(socket_fd_, SIOCGIFINDEX, &ifr) < 0) {
-        std::cerr << "Error setting device parameters (ioctl)" << std::endl;
+        std::cerr << "[ERR] Error setting device parameters (ioctl)" << std::endl;
         return -1;
     }
 
-    std::cout << "Binding CAN socket" << std::endl;
+    // Binding CAN socket
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;
     if (bind(socket_fd_, (struct sockaddr*)(&addr), sizeof(addr))) {
-        std::cerr << "Error binding CAN interface" << std::endl;
+        std::cerr << "[ERR] Error binding CAN interface" << std::endl;
         return -1;
     }
 
     write_can_frame_.can_dlc = CAN_PAYLOAD_LENGTH;
     read_can_frame_.can_dlc = CAN_PAYLOAD_LENGTH;
 
-    std::cout << "CANBus initialization complete, socket fd: " << socket_fd_ << std::endl;
+    // CANBus initialization complete
     return socket_fd_;
 }
 

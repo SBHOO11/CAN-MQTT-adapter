@@ -12,8 +12,7 @@ public:
     MQTT_Config() {};
     std::string server_addr;
     std::string client_id;
-    std::string pub_topic;
-    std::string sub_topic;
+    std::vector<std::string> sub_topics;
     int QOS{};
 };
 

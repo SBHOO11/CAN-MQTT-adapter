@@ -2,18 +2,19 @@
 // Created by shibinhoo on 22/6/20.
 //
 
-#include <iostream>
 #include "DanfossWrapper.h"
-
-std::map<uint, std::string> DanfossWrapper::CAN_id_2_MQTT_header_map_ = {
-        {10, "Joystick_X"},
-        {11, "Joystick_Y"},
-        {12, "Joystick_Z"}
-};
 
 MQTT_Msg DanfossWrapper::convertCAN2MQTT(CAN_Msg &can_msg) {
     // Construct MQTT topic from CAN id
-    std::string mqtt_topic = CAN_id_2_MQTT_header_map_[can_msg.can_id];
+    Json::Value::Members keys = addr_map_.getMemberNames();
+    std::string mqtt_topic{""};
+    for (std::string key : keys) {
+        if (addr_map_[key].asInt() == can_msg.can_id) {
+            mqtt_topic = key;
+            break;
+        }
+    }
+
     if (mqtt_topic == "") {
         std::cerr << "CAN-id to MQTT mapping not found" << std::endl;
         throw Common::InvalidMapping();
@@ -30,23 +31,13 @@ CAN_Msg DanfossWrapper::convertMQTT2CAN(MQTT_Msg &mqtt_msg) {
     // Construct CAN id from MQTT header
 
     // Check if MQTT topic is defined in the list
-    auto start_itr = CAN_id_2_MQTT_header_map_.begin();
-    auto end_itr = CAN_id_2_MQTT_header_map_.end();
-    auto itr = start_itr;
-    for ( ; itr != end_itr; itr++)
-    {
-        if (itr->second == mqtt_msg.topic)
-            break;
-    }
-
-    // Logically it should always be found, just in case
-    if (itr == end_itr) {
-        std::cerr << "MQTT -> CANid mapping not found" << std::endl;
+    if (!addr_map_.isMember(mqtt_msg.topic)) {
+        std::cerr << "MQTT to CANid mapping not found" << std::endl;
         throw Common::InvalidMapping();
     }
 
     CAN_Msg can_msg{};
-    can_msg.can_id = itr->first;
+    can_msg.can_id = addr_map_[mqtt_msg.topic].asInt();
     ENCODE_NUM16_TO_2BYTES(std::stoi(mqtt_msg.payload), can_msg.data[0], can_msg.data[1]);
 
     return can_msg;
